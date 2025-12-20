@@ -1,0 +1,82 @@
+CREATE TABLE hotels (
+	hotel_id SERIAL PRIMARY KEY,
+	name VARCHAR(50) NOT NULL,
+	city VARCHAR(40) NOT NULL,
+	stars INTEGER NOT NULL CHECK (stars BETWEEN 1 AND 5)
+);
+CREATE TABLE rooms (
+	room_id SERIAL PRIMARY KEY,
+	room_number INTEGER NOT NULL,
+	floor INTEGER NOT NULL,
+	price_per_night NUMERIC(8,2) NOT NULL,
+	hotel_id INTEGER REFERENCES hotels(hotel_id) ON DELETE CASCADE
+);
+CREATE TABLE guests (
+	guest_id SERIAL PRIMARY KEY,
+	first_name VARCHAR(30) NOT NULL,
+	last_name VARCHAR(30) NOT NULL,
+	phone VARCHAR(20),
+	room_id INTEGER REFERENCES rooms(room_id) ON DELETE CASCADE
+);
+CREATE TABLE services (
+	service_id SERIAL PRIMARY KEY,
+	service_name VARCHAR(40) NOT NULL,
+	price NUMERIC(8,2) NOT NULL,
+	room_id INTEGER REFERENCES rooms(room_id) ON DELETE CASCADE
+);
+INSERT INTO hotels (name, city, stars) VALUES
+('Hilton', 'Tbilisi', 5),
+('Ibis', 'Batumi', 4);
+INSERT INTO rooms (room_number, floor, price_per_night, hotel_id) VALUES
+(101, 1, 150.00, 1),
+(102, 1, 180.00, 1),
+(201, 2, 220.00, 1),
+(301, 3, 120.00, 2),
+(302, 3, 130.00, 2),
+(401, 4, 160.00, 2);
+INSERT INTO guests (first_name, last_name, phone, room_id) VALUES
+('Nika', 'Chitadze', '599111111', 1),
+('Ana', 'Beridze', '599222222', 1),
+('Giorgi', 'lomidze', '599333333', 2),
+('Luka', 'Maisuradze', '599444444', 2),
+('Mariam', 'Gogoladze', '599555555', 4),
+('Sandro', 'Gelashvili', '599666666', 4);
+INSERT INTO services (service_name, price, room_id) VALUES
+('Breakfast', 30.00, 1),
+('Cleaning', 20.00, 1),
+('Spa', 50.00, 2),
+('Room Service', 25.00, 2),
+('Breakfast', 25.00, 4),
+('Cleaning', 15.00, 4);
+
+SELECT r.room_number, r.floor, h.name
+FROM rooms r
+JOIN hotels h ON r.hotel_id = h.hotel_id;
+
+SELECT g.first_name, g.last_name, r.room_number, h.name
+FROM guests g
+JOIN rooms r ON g.room_id = r.room_id
+JOIN hotels h ON r.hotel_id = h.hotel_id;
+
+SELECT g.first_name, g.last_name
+FROM guests g
+JOIN rooms r ON g.room_id = r.room_id
+JOIN hotels h ON r.hotel_id = h.hotel_id
+WHERE h.name = 'Hilton';
+
+SELECT h.name, r.room_number
+FROM hotels h
+JOIN rooms r ON h.hotel_id = r.hotel_id;
+
+SELECT r.room_number
+FROM rooms r
+LEFT JOIN services s ON r.room_id = s.room_id
+WHERE s.service_id IS NULL;
+
+DELETE FROM rooms WHERE room_id = 1;
+UPDATE rooms
+SET price_per_night = 200
+WHERE room_id = 2;
+UPDATE guests
+SET room_id = 3
+WHERE guest_id = 2;
