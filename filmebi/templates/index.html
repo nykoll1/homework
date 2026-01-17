@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Movies</title>
+    <style>
+        .green { color: green; }
+        .orange { color: orange; }
+        .gray { color: gray; }
+        table, th, td { border: 1px solid black; border-collapse: collapse; }
+        th, td { padding: 6px; }
+    </style>
+</head>
+<body>
+
+<h2>სულ ფილმები: {{ total_movies }}</h2>
+<h3>საშუალო ხანგრძლივობა: {{ average_duration }} წუთი</h3>
+
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Year</th>
+        <th>Rating</th>
+        <th>Genre</th>
+        <th>Duration</th>
+    </tr>
+
+    {% for movie in movies %}
+    <tr class="
+        {% if movie.rating >= 9 %}
+            green
+        {% elif movie.rating >= 8.5 %}
+            orange
+        {% else %}
+            gray
+        {% endif %}
+    ">
+        <td>{{ movie.title }}</td>
+        <td>{{ movie.year }}</td>
+        <td>{{ movie.rating }}</td>
+        <td>{{ movie.genre }}</td>
+        <td>{{ movie.duration }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>
