@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>home</title>
+</head>
+<body>
+    <h2>Categories</h2>
+<ul>
+  {% for category in categories %}
+    <li>
+      {{ category.title }} ({{ category.product_count }})
+    </li>
+  {% endfor %}
+</ul>
+
+<hr>
+<h2>Products</h2>
+{% for product in products %}
+  <div>
+    <h3>
+      {{ product.title }}
+      {% if product.is_sale %}
+        <span style="color:red;">SALE</span>
+      {% endif %}
+    </h3>
+    <p>Price: {{ product.price }}</p>
+  </div>
+{% endfor %}
+</body>
+</html>
