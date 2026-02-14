@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'store',
-    'debug_toolbar'
+    'debug_toolbar',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +59,7 @@ ROOT_URLCONF = 'store_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templetes' ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -126,4 +127,6 @@ STATICFILES_DIRS = [ BASE_DIR / 'store'/ 'static']
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
-
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "home"
+LOGIN_URL = "login"
