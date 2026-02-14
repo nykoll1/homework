@@ -1,18 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sale</title>
-</head>
-<body>
-    <h2>Sale Products</h2>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Sale Products</h2>
 
 {% for product in products %}
-  <div>
-    <h3>{{ product.title }}</h3>
-    <p>Price: {{ product.price }}</p>
-  </div>
+<div>
+
+<h3>{{ product.title }}</h3>
+<p>{{ product.price }}</p>
+
+</div>
 {% endfor %}
-</body>
-</html>
+
+{% endblock %}

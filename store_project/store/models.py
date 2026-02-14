@@ -13,10 +13,12 @@ class Product(models.Model):
     description = models.TextField(null=True, blank=True)
     is_available = models.BooleanField(default=True)
     is_sale = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
     category = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,
         related_name='products'
+    
     )
 
     def __str__(self):

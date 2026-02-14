@@ -1,34 +1,13 @@
 {% extends 'base.html' %}
+
 {% block content %}
 
-<h2>Categories</h2>
-<ul>
-  {% for category in categories %}
-    <li>
-      <a href="{% url 'category_products' category.id %}">
-        {{ category.title }} ({{ category.product_count }})
-      </a>
-    </li>
-  {% endfor %}
-</ul>
+<div class="row">
 
-<hr>
-
-<h2>Products</h2>
 {% for product in products %}
-  <div>
-    <h3>
-      <a href="{% url 'product_detail' product.id %}">
-        {{ product.title }}
-      </a>
 
-      {% if product.is_sale %}
-        <span style="color:red;">SALE</span>
-      {% endif %}
-    </h3>
-
-    <p>Price: {{ product.price }}</p>
-  </div>
 {% endfor %}
+
+</div>
 
 {% endblock %}
