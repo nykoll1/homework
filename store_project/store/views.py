@@ -1,80 +1,74 @@
-from django.shortcuts import render, get_object_or_404, redirect
-
-# Create your views here.
 from django.db.models import Count
+from django.urls import reverse_lazy
+from django.views.generic import (
+    TemplateView,
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView
+)
+
 from .models import Product, Category
-
 from .forms import ProductCreateForm, ProductUpdateForm
-def home(request):
-    products = Product.objects.filter(is_available=True)
 
-    categories = Category.objects.annotate(
-        product_count=Count('products')
-    ).filter(product_count__gt=0)
+class HomeView(TemplateView):
+    template_name = "home.html"
 
-    return render(request, 'home.html', {
-        'products': products,
-        'categories': categories
-    })
-def sale_products(request):
-    products = Product.objects.filter(
-        is_sale=True,
-        is_available=True
-    )
-    return render(request, 'sale.html', {'products': products})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-def category_products(request, id):
-    category = get_object_or_404(Category, id=id)
+        context["products"] = Product.objects.filter(is_available=True)
 
-    products = Product.objects.filter(
-        category=category,
-        is_available=True
-    )
+        context["categories"] = Category.objects.annotate(
+            product_count=Count("products")
+        ).filter(product_count__gt=0)
 
-    return render(request, 'category_products.html', {
-        'category': category,
-        'products': products
-    })
-def product_detail(request, id):
-    product = get_object_or_404(Product, id=id)
+        return context
+class SaleProductsView(ListView):
+    model = Product
+    template_name = "sale.html"
+    context_object_name = "products"
 
-    return render(request, 'product_detail.html', {
-        'product': product
-    })
-#class ProductCreateForm(forms.ModelForm):
-    class Meta:
-        model = Product
-        exclude = ['is_available']
+    def get_queryset(self):
+        return Product.objects.filter(
+            is_sale=True,
+            is_available=True
+        )
+class CategoryProductsView(ListView):
+    model = Product
+    template_name = "category_products.html"
+    context_object_name = "products"
 
+    def get_queryset(self):
+        return Product.objects.filter(
+            category_id=self.kwargs["id"],
+            is_available=True
+        )
 
-#class ProductUpdateForm(forms.ModelForm):
-    class Meta:
-        model = Product
-        fields = ('_all_',)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["category"] = Category.objects.get(id=self.kwargs["id"])
+        return context
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = "product_detail.html"
+    context_object_name = "product"
+    pk_url_kwarg = "id"
 
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductCreateForm
+    template_name = "product_form.html"
+    success_url = reverse_lazy("home")
 
-def product_create(request):
-    form = ProductCreateForm(request.POST or None)
-
-    if form.is_valid():
-        form.save()
-        return redirect('home')
-
-    return render(request, 'product_form.html', {'form': form})
-
-
-def product_update(request, id):
-    product = get_object_or_404(Product, id=id)
-    form = ProductUpdateForm(request.POST or None, instance=product)
-
-    if form.is_valid():
-        form.save()
-        return redirect('home')
-
-    return render(request, 'product_form.html', {'form': form})
-
-
-def product_delete(request, id):
-    product = get_object_or_404(Product, id=id)
-    product.delete()
-    return redirect('home')
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductUpdateForm
+    template_name = "product_form.html"
+    pk_url_kwarg = "id"
+    success_url = reverse_lazy("home")
+class ProductDeleteView(DeleteView):
+    model = Product
+    pk_url_kwarg = "id"
+    success_url = reverse_lazy("home")
